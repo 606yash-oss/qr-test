@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>QR Camera Test</title>
+<style>
+  body { font-family: Arial; text-align: center; margin-top: 50px; }
+  #reader { width: 300px; height: 300px; margin: 20px auto; border: 2px dashed #333; }
+</style>
+</head>
+<body>
+<h1>Camera Test</h1>
+<div id="reader"></div>
+<button onclick="startScanner()">Start Scanner</button>
+<p id="status"></p>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+<script>
+let scanner;
+
+function startScanner() {
+    scanner = new Html5Qrcode("reader");
+    Html5Qrcode.getCameras().then(cameras => {
+        if (cameras && cameras.length) {
+            const cameraId = cameras[0].id;
+            scanner.start(cameraId, { fps: 10 }, qrMessage => {
+                document.getElementById('status').innerText = "QR Code: " + qrMessage;
+            }).catch(err => {
+                document.getElementById('status').innerText = "Error starting camera: " + err;
+            });
+        } else {
+            document.getElementById('status').innerText = "No cameras found.";
+        }
+    }).catch(err => {
+        document.getElementById('status').innerText = "Camera access error: " + err;
+    });
+}
+</script>
+</body>
+</html>
